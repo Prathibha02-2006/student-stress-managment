@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi Subject Smart Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Multi Subject Exam Timetable Generator</h2>
+
+<form method="POST">
+
+    Name: <input type="text" name="name" required><br><br>
+
+    Daily Study Hours:
+    <input type="number" name="daily_hours" required><br><br>
+
+    <h3>Enter Subjects</h3>
+
+    <div id="subjects">
+        <div>
+            Subject: <input type="text" name="subject[]" required>
+            Exam Date: <input type="date" name="exam_date[]" required>
+            Priority:
+            <select name="priority[]">
+                <option value="High">High (Weak Subject)</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <br><br>
+        </div>
+    </div>
+
+    <button type="button" onclick="addSubject()">Add More Subjects</button>
+    <br><br>
+
+    <h3>Study Preference</h3>
+
+    Are you:
+    <select name="chronotype" required>
+        <option value="Morning">Morning Person</option>
+        <option value="Night">Night Person</option>
+    </select>
+
+    <br><br>
+
+    Concentration Level:
+    <select name="concentration" required>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+    </select>
+
+    <br><br>
+
+    Need Reminder Alerts?
+    <select name="reminder" required>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Generate Timetable</button>
+</form>
+
+{% if timetable %}
+<hr>
+<h2>Your Weekly Study Timetable</h2>
+
+{% for day in timetable %}
+<h3>{{ day.date }}</h3>
+
+<table border="1" width="50%" align="center">
+<tr>
+<th>Time</th>
+<th>Activity</th>
+</tr>
+
+{% for item in day.schedule %}
+<tr>
+<td>{{ item.time }}</td>
+<td>{{ item.subject }}</td>
+</tr>
+{% endfor %}
+
+</table>
+<br>
+{% endfor %}
+
+{% endif %}
+
+<script>
+function addSubject() {
+    const div = document.createElement("div");
+    div.innerHTML = `
+        Subject: <input type="text" name="subject[]" required>
+        Exam Date: <input type="date" name="exam_date[]" required>
+        Priority:
+        <select name="priority[]">
+            <option value="High">High (Weak Subject)</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+        </select>
+        <br><br>
+    `;
+    document.getElementById("subjects").appendChild(div);
+}
+</script>
+
+</body>
+</html>

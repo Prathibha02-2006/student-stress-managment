@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stress Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Student Stress Analysis Quiz</h2>
+
+{% if not total_score %}
+<form method="POST">
+
+    Name: <input type="text" name="name" required><br><br>
+
+    <p>1. How often do you feel tired or lack sleep?</p>
+    <select name="q1">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>2. Do you feel academic pressure?</p>
+    <select name="q2">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>3. Do you struggle with time management?</p>
+    <select name="q3">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>4. Do you feel social or family pressure?</p>
+    <select name="q4">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>5. Do you neglect physical fitness?</p>
+    <select name="q5">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>6. Do you feel overwhelmed by academic workload?</p>
+    <select name="q6">
+        <option value="0">Never</option>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>What kind of activities interest you the most (this will personalise challenge suggestions)?</p>
+    <select name="interest" required>
+        <option value="General">General</option>
+        <option value="Exercise">Exercise</option>
+        <option value="Art">Art</option>
+        <option value="Music">Music</option>
+        <option value="Reading">Reading</option>
+        <option value="Meditation">Meditation</option>
+        <option value="Cooking">Cooking</option>
+    </select>
+
+    <p>Briefly describe the problems or feelings you’re experiencing (optional):</p>
+    <textarea name="comment" rows="4" cols="50" placeholder="I feel overwhelmed because..."></textarea>
+
+    <br><br>
+    <button type="submit">Submit Quiz</button>
+</form>
+{% else %}
+<hr>
+<div style="max-width:300px;margin:0 auto;">
+    <canvas id="stressChart"></canvas>
+</div>
+<h3>Total Score: {{ total_score }}</h3>
+<h3>Stress Level: {{ stress_level }}</h3>
+<h3>Weak Area: {{ weak_area }}</h3>
+<h3>Personalised Advice</h3>
+{% if not ai_available %}
+<p><em>Note: AI analysis unavailable (API key not set). Showing default recommendations.</em></p>
+{% endif %}
+<p>{{ suggestion }}</p>
+{% if comment %}
+<h4>Your description:</h4>
+<p>{{ comment }}</p>
+{% endif %}
+{% if session.get('interest') %}
+<h4>Interest category: {{ session.get('interest') }}</h4>
+{% endif %}
+
+<h3>Additional Recommendations</h3>
+<ul>
+    <li>Keep a daily journal to track mood changes.</li>
+    <li>Practice a relaxation technique for 10 minutes each day.</li>
+    <li>Stay active with at least 30 minutes of exercise.</li>
+    <li>Connect with friends or a mentor regularly.</li>
+</ul>
+
+<h3>Challenges</h3>
+<form method="POST" action="/challenge">
+    <button type="submit" name="days" value="30">30-Day Challenge</button>
+    <button type="submit" name="days" value="60">2-Month Challenge</button>
+</form>
+
+<div id="reminderMsg" style="margin-top:20px;color:#d00;"></div>
+
+<!-- chart script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('stressChart').getContext('2d');
+    var maxScore = 24; // 6 questions * 4
+    var score = {{ total_score }};
+    var bgColor = score <= 10 ? '#48c774' : score <= 18 ? '#ffdd57' : '#ff3860';
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Score','Remaining'],
+            datasets: [{
+                data: [score, maxScore - score],
+                backgroundColor: [bgColor, '#eaeaea'],
+                hoverBackgroundColor: [bgColor, '#eaeaea']
+            }]
+        },
+        options: {
+            cutout: '70%',
+            plugins: {
+                tooltip: {enabled: false},
+                legend: {display: false}
+            }
+        }
+    });
+
+
+</script>
+{% endif %}
+
+</body>
+</html>
+
+

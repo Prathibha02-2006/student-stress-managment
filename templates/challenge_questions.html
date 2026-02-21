@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post-Challenge Questionnaire</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Post-Challenge Stress Check</h2>
+<p>Answer the same questions to see how your stress levels have changed after the challenge.</p>
+
+{% if new_score is not defined %}
+<form method="POST">
+    <p>1. How often do you feel tired or lack sleep?</p>
+    <select name="q1" required>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>2. Do you feel academic pressure?</p>
+    <select name="q2" required>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>3. Do you struggle with time management?</p>
+    <select name="q3" required>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>4. Do you feel social or family pressure?</p>
+    <select name="q4" required>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <p>5. Do you neglect physical fitness?</p>
+    <select name="q5" required>
+        <option value="1">Rarely</option>
+        <option value="2">Sometimes</option>
+        <option value="3">Often</option>
+        <option value="4">Always</option>
+    </select>
+
+    <br><br>
+    <button type="submit">Submit & See Difference</button>
+</form>
+{% else %}
+<div class="result-card">
+    <h3>Before vs After Challenge</h3>
+    <table style="margin: 15px auto; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 8px 16px; text-align: left;">Stress score before challenge:</td>
+            <td style="padding: 8px 16px; font-weight: bold;">{{ orig_score }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; text-align: left;">Stress score after challenge:</td>
+            <td style="padding: 8px 16px; font-weight: bold;">{{ new_score }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; text-align: left;">Difference:</td>
+            <td style="padding: 8px 16px;">
+                <span class="{{ diff_class }}">{{ diff_text }}</span>
+            </td>
+        </tr>
+    </table>
+    <p>{{ message }}</p>
+    <p><a href="/stress">Back to Stress Page</a> | <a href="/challenge">Back to Challenge</a></p>
+</div>
+{% endif %}
+
+</body>
+</html>
+

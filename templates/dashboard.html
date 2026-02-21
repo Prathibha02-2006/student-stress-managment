@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="user-info">
+            <div class="avatar" style="background: {{ avatar_color }};">{{ session.get('username')[0]|upper }}</div>
+            <h3>{{ session.get('username') }}</h3>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/stress">Stress</a></li>
+                <li><a href="/challenge">Challenge</a></li>
+                <li><a href="/personality">Personality</a></li>
+                <li><a href="/exam_planner">Study Planner</a></li>
+                <li><a href="/posts">Community Posts</a></li>
+            </ul>
+        </nav>
+        <div class="logout-link"><a href="/logout">Logout</a></div>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h2>Dashboard Overview</h2>
+        </header>
+        <section class="cards">
+            <div class="card">Stress Tests<br><strong>{{ total_stress }}</strong></div>
+            <div class="card">Avg Stress Score<br><strong>{{ avg_stress|round(1) }}</strong></div>
+            <div class="card">Personality Tests<br><strong>{{ total_personality }}</strong></div>
+            <div class="card">Avg Personality<br><strong>{{ avg_personality|round(1) }}</strong></div>
+        </section>
+        <section class="charts">
+            <div class="chart-box">
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="donutChart"></canvas>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    // weak area distribution bar chart
+    var ctx = document.getElementById('barChart').getContext('2d');
+    var weakLabels = {{ weak_counts.keys()|list|tojson }};
+    var weakData = {{ weak_counts.values()|list|tojson }};
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: weakLabels,
+            datasets: [{
+                label: 'Weak Areas',
+                data: weakData,
+                backgroundColor: '#4CAF50'
+            }]
+        }
+    });
+
+    // stress level donut
+    var ctx2 = document.getElementById('donutChart').getContext('2d');
+    var levelLabels = {{ level_counts.keys()|list|tojson }};
+    var levelData = {{ level_counts.values()|list|tojson }};
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: levelLabels,
+            datasets: [{
+                data: levelData,
+                backgroundColor: ['#48c774','#ffdd57','#ff3860']
+            }]
+        }
+    });
+</script>
+</body>
+</html>
